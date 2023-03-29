@@ -1,41 +1,26 @@
 const express = require("express");
-const morgan = require("morgan");
-
+const bodyParser = require("body-parser");
 const app = express();
 
 app.use(morgan("tiny"));
 
 const port = 3000;
 
-const printHeader = (req, res, next) => {
-  console.log(req.headers);
-  next();
-};
+app.use(bodyParser.urlencoded({ extended: false }));
 
-const printMethod = (req, res, next) => {
-  console.log(req.method);
-  next();
-};
+app.get("/", (req, res) => {
+	res.send("Hello World!");
+});
 
-const isAuthorized = (req, res, next) => {
-  if (req.headers.authorization) {
-    next();
-    return;
-  }
+app.get("/about", (req, res) => {
+	res.send(`<p style="color:red">HELLO</p>`);
+});
 
-  res.status(401).end();
-};
-
-const handleGet = (req, res) => {
-  res.send("Hello World!");
-};
-
-app.use(isAuthorized);
-app.use(printHeader);
-app.use(printMethod);
-
-app.get("/", handleGet);
+app.post("/post", (req, res) => {
+	const { message } = req.body;
+	res.send(`here is your message: ${message}`);
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+	console.log(`Example app listening on port ${port}`);
 });
